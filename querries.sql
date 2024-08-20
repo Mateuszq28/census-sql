@@ -75,6 +75,7 @@ SELECT * FROM TASK_A;
 
 -- Chat GPT answer
 
+CREATE VIEW gpt_1 AS
 WITH contract_counts AS (
     SELECT
         work_company_id,
@@ -96,6 +97,7 @@ FROM
     contract_counts
 GROUP BY
     contract_type;
+SELECT * FROM gpt_1;
 
 -- output:
 -- employment|10.0|14360.5565833333
@@ -104,6 +106,7 @@ GROUP BY
 
 -- My edit of Chat GPT answer
 
+CREATE VIEW gpt_2 AS
 WITH contract_counts AS (
     SELECT
         work_company_id,
@@ -127,10 +130,14 @@ FROM
 GROUP BY
     work_company_id,
     contract_type;
+SELECT * FROM gpt_1;
 
 
 -- Result of my ask chat-GPT to correct querry
+-- + MY EDIT
 
+DROP VIEW gpt_3;
+CREATE VIEW gpt_3 AS
 WITH contract_counts AS (
     SELECT
         employment.work_company_id,
@@ -139,7 +146,9 @@ WITH contract_counts AS (
         COUNT(worker_id) AS employee_count,
         AVG(salary) AS average_salary
     FROM
-        employment, work_companies
+        employment
+    LEFT JOIN work_companies
+    ON work_companies.work_company_id = employment.work_company_id
     GROUP BY
         employment.work_company_id,
         contract_type
@@ -154,10 +163,11 @@ SELECT
     COALESCE(cc2.average_salary, 0) AS employment_avg_salary
 FROM
     (SELECT * FROM contract_counts WHERE contract_type = 'mandate') cc1
-LEFT JOIN
+FULL OUTER JOIN
     (SELECT * FROM contract_counts WHERE contract_type = 'employment') cc2
 ON
     cc1.work_company_id = cc2.work_company_id;
+SELECT * FROM gpt_3;
 
 
 
@@ -253,17 +263,34 @@ SELECT * FROM employment WHERE contract_type = 'employment' AND work_company_id 
 DELETE FROM employment WHERE contract_type = 'employment' AND work_company_id = 2;
 SELECT * FROM employment WHERE contract_type = 'employment' AND work_company_id = 2;
 
+
 -- ++++++++++++++++++++++++++++++++++++++
+
+
+DROP VIEW no_name;
+CREATE VIEW no_name AS
+SELECT
+* FROM company_id_mandate_count_avg
+FULL OUTER JOIN company_id_employment_count_avg ON
+company_id_mandate_count_avg.work_company_id =
+company_id_employment_count_avg.work_company_id;
+SELECT * FROM no_name;
+
 
 -- FINAL VIEW
 
 DROP VIEW TASK_B;
 CREATE VIEW TASK_B AS
 SELECT
-* FROM company_id_mandate_count_avg
-FULL OUTER JOIN company_id_employment_count_avg ON
-company_id_mandate_count_avg.work_company_id =
-company_id_employment_count_avg.work_company_id;
+no_name.work_company_id,
+work_companies.company_name,
+no_name.contract_type,
+no_name.employment_count,
+no_name.employment_avg_salary
+FROM no_name
+LEFT JOIN work_companies
+ON work_companies.work_company_id = no_name.work_company_id
+GROUP BY no_name.work_company_id;
 SELECT * FROM TASK_B;
 
 
