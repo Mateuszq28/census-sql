@@ -297,3 +297,69 @@ SELECT * FROM TASK_B;
 -- ======
 -- TASK c
 -- ======
+
+-- Find a family (at most 2 generations) that earns the least. Provide the name and surname of any person in that family.
+
+
+CREATE FUNCTION GetPrice (Vendor CHAR(20), Pid INT)         
+    RETURNS  DECIMAL(10,3) 
+    LANGUAGE SQL  
+    MODIFIES SQL
+    BEGIN 
+    DECLARE price DECIMAL(10,3); 
+
+    IF Vendor = 'Vendor 1' 
+        THEN SET price = (SELECT ProdPrice FROM V1Table WHERE Id = Pid); 
+    ELSE IF Vendor = 'Vendor 2' 
+        THEN SET price = (SELECT Price 
+                        FROM V2Table 
+                        WHERE Pid = GetPrice.Pid); 
+    END IF; 
+
+    RETURN price; 
+END 
+
+
+
+
+WITH family_salaries AS (
+    SELECT
+        p.person_id,
+        p.first_name,
+        p.last_name,
+        SUM(e.salary) AS salary,
+        SUM(e1.salary) AS mother_salary,
+        SUM(e2.salary) AS father_salary,
+        SUM(e3.salary) AS wife_salary,
+        SUM(e4.salary) AS husband_salary
+    FROM
+        people p
+    LEFT JOIN
+        employment e ON p.person_id = e.worker_id
+    LEFT JOIN
+        people m ON p.mother_id = m.person_id
+    LEFT JOIN
+        employment e1 ON m.person_id = e1.worker_id
+    LEFT JOIN
+        people f ON p.father_id = f.person_id
+    LEFT JOIN
+        employment e2 ON f.person_id = e2.worker_id
+    LEFT JOIN
+        people w ON p.wife_id = w.person_id
+    LEFT JOIN
+        employment e3 ON w.person_id = e3.worker_id
+    LEFT JOIN
+        people h ON p.husband_id = h.person_id
+    LEFT JOIN
+        employment e4 ON h.person_id = e4.worker_id
+)
+SELECT
+    person_id,
+    first_name,
+    last_name,
+    (salary + mother_salary + father_salary + wife_salary + husband_salary) AS total_family_salary
+FROM
+    family_salaries
+ORDER BY
+    total_family_salary
+LIMIT 1;
