@@ -68,10 +68,10 @@ SELECT * FROM one_person_have_max_granddoughter_count;
 -- Present the average number of employees employed under a mandate contract and the average number of employees employed under an employment contract in all companies and the average salary for these contracts.
 
 SELECT
-        AVG( COUNT(SELECT * FROM employment WHERE contract_type = 'zlecenie' ) GROUP BY work_company_id )
+        AVG( COUNT(SELECT * FROM employment WHERE contract_type = 'mandate' ) GROUP BY work_company_id )
         JOIN
-        AVG( (SELECT salary FROM employment WHERE contract_type = 'zlecenie' ) GROUP BY work_company_id )
+        AVG( (SELECT salary FROM employment WHERE contract_type = 'mandate' ) GROUP BY work_company_id )
 
     UNION
-        AVG( COUNT(SELECT * FROM employment WHERE contract_type = 'praca' ) GROUP BY work_company_id )
+        AVG( COUNT(SELECT * FROM employment WHERE contract_type = 'employment' ) GROUP BY work_company_id )
 

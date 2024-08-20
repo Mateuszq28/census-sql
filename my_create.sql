@@ -72,8 +72,8 @@ CREATE TABLE employment (
     work_company_id int,
     -- contract_type  SET('zlecenie', 'praca'),
     contract_type varchar(255) CHECK
-    ( contract_type = 'zlecenie' OR
-      contract_type = 'praca' ),
+    ( contract_type = 'mandate' OR
+      contract_type = 'employment' ),
     salary float,
 
     -- PK
@@ -89,3 +89,21 @@ CREATE TABLE employment (
     REFERENCES work_company(work_company_id)
 );
 
+
+-- INDEXING TABLES
+
+CREATE INDEX idx_first_name ON people (first_name);
+CREATE INDEX idx_last_name ON people (last_name);
+CREATE INDEX idx_pesel ON people (pesel);
+
+CREATE INDEX idx_oneGenerationFamily_manAsRoot
+ON people (person_id, wife_id);
+CREATE INDEX idx_oneGenerationFamily_womanAsRoot
+ON people (person_id, husband_id);
+
+CREATE INDEX
+idx_oneGenerationFamily_withParents_manAsRoot
+ON people (person_id, wife_id, father_id);
+CREATE INDEX
+idx_oneGenerationFamily_withParents_womanAsRoot
+ON people (person_id, husband_id, mother_id);
