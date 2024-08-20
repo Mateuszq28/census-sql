@@ -108,5 +108,28 @@ perl -i -pe 's/00000/sprintf("%05d", int(rand(100000)))/ge' file.txt
 ```
 
 
+<h2>Table Indexing</h2>
 
+```sql
+CREATE INDEX idx_first_name ON people (first_name);
+CREATE INDEX idx_last_name ON people (last_name);
+CREATE INDEX idx_pesel ON people (pesel);
 
+CREATE INDEX idx_oneGenerationFamily_manAsRoot
+ON people (person_id, wife_id);
+CREATE INDEX idx_oneGenerationFamily_womanAsRoot
+ON people (person_id, husband_id);
+
+CREATE INDEX
+idx_oneGenerationFamily_withParents_manAsRoot
+ON people (person_id, wife_id, father_id);
+CREATE INDEX
+idx_oneGenerationFamily_withParents_womanAsRoot
+ON people (person_id, husband_id, mother_id);
+```sql
+
+Deleting Indexes Example<br/>
+
+```sql
+ALTER TABLE people DROP INDEX idx_first_name;
+```
