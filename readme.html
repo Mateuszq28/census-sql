@@ -87,6 +87,19 @@ grep -oE '\b[0-9]{11}\b' add_people.sql | sort | uniq -d | grep -Ff - add_people
 grep -oE '\b[0-9]{11}\b' add_people.sql | awk '{count[$0]++} END {for (num in count) if (count[num] > 1) print num}'
 ```
 
+substitute part of a string<br/>
+in this case:<br/>
+change every 5-zeros string like "0000" into ranfom 5-digit number
+
+```shell
+# didn't try
+while grep -q "00000" file.txt; do
+    sed -i "0,/00000/s//$(shuf -i 10000-99999 -n 1)/" file.txt
+done
+
+# works
+perl -i -pe 's/00000/sprintf("%05d", int(rand(100000)))/ge' file.txt
+```
 
 
 
