@@ -1,6 +1,39 @@
 <h1>SQL Databse and it's querries.</h1>
 
+<h2>SQLite</h2>
+
+create database
+
+```shell
+sqlite3 census.db
+```
+
+list tables
+
+```shell
+.tables
+```
+
+table schema
+
+```shell
+.schema tablename
+```
+
+sqlite help
+
+```shell
+.help
+```
+
+
+<!-- postgresql database -->
+<!-- problems with utf-8 -->
+
+<!-- 
 <h2>Created Tables</h2>
+
+SET client_encoding = 'UTF8';
 
 <p align="center">
 <img src="img_readme/tables.png" alt="Created tables"><br/>
@@ -21,5 +54,21 @@
 <img src="img_readme/table_employment_info.png" alt="Definition of employment table"><br/>
 <i>Definition of employment table</i>
 </p>
+-->
+
+
+<h2>Generating Data</h2>
+<ul>
+    <li><i>my_create.sql</i> - definition of the tables</li>
+    <li>data</li>
+    <ul>
+        <li><i>add_people.sql</i> - add data to people table</li>
+        <li><i>add_work_company.sql</i> - add data to work_company table</li>
+        <li><i>add_employment.sql</i> - add data to employment table</li>
+    </ul>
+</ul>
+<p>Chat GPT an Perplexity were used to generate data to feed the database.</p>
+
+
 
 
