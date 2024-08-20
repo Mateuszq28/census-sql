@@ -5,7 +5,7 @@ CREATE TABLE people (
     -- PK
     person_id int NOT NULL UNIQUE,
 
-    pesel varchar(255) NOT NULL UNIQUE,
+    pesel varchar(11) NOT NULL UNIQUE,
     first_name varchar(255),
     last_name varchar(255),
     birth_date date CHECK
