@@ -1,0 +1,57 @@
+Populacja mieszkańców liczy 300 osób. Każdy z nich może mieć więcej niż jedną pracę. Każy mieszkaniec ma swój unikalny numer id z przedziału 1-300. Poniżej przedstawiam rekordy dodane do tabeli zawierającej miejsca pracy.
+
+INSERT INTO work_company (work_company_id, company_name, chairman_id)
+VALUES
+  (1, 'Tech Solutions', 1),
+  (2, 'Green Energy Corp', 2),
+  (3, 'Innovatech', 3),
+  (4, 'Blue Horizon', 4),
+  (5, 'Quantum Industries', 5),
+  (6, 'Future Vision', 6),
+  (7, 'EcoBuild', 7),
+  (8, 'Global Dynamics', 8),
+  (9, 'Cybernetics Ltd', 9),
+  (10, 'AlphaSoft', 10),
+  (11, 'BioHealth Inc.', 11),
+  (12, 'NextGen Solutions', 12),
+  (13, 'Renewable Resources', 13),
+  (14, 'Infinity Labs', 14),
+  (15, 'Vertex Technologies', 15),
+  (16, 'SkyNet Systems', 16),
+  (17, 'Pioneer Enterprises', 17),
+  (18, 'EverGreen', 18),
+  (19, 'Stellar Innovations', 19),
+  (20, 'Synergy Group', 20),
+  (21, 'Elemental Industries', 21),
+  (22, 'AstraTech', 22),
+  (23, 'OmniCorp', 23),
+  (24, 'Cosmos Enterprises', 24),
+  (25, 'Zenith Corporation', 25);
+
+Na podstawie poniższej definicji tabeli zatrudnienia:
+
+CREATE TABLE employment (
+    -- PK
+    job_id int NOT NULL UNIQUE,
+
+    worker_id int,
+    work_company_id int,
+    -- contract_type  SET('zlecenie', 'praca'),
+    contract_type varchar(255) CHECK
+    ( contract_type = 'zlecenie' OR
+      contract_type = 'praca' ),
+
+    -- PK
+    PRIMARY KEY (job_id),
+
+    -- FK
+    CONSTRAINT FK_worker_job
+    FOREIGN KEY (worker_id)
+    REFERENCES people(person_id),
+
+    CONSTRAINT FK_company_job
+    FOREIGN KEY (work_company_id)
+    REFERENCES work_company(work_company_id)
+);
+
+dodaj do niej 50 rekordów . Uwzględnij, że właściciel firmy chairman też w niej pracuje.
