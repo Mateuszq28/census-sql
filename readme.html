@@ -133,3 +133,132 @@ Deleting Indexes Example<br/>
 ```sql
 ALTER TABLE people DROP INDEX idx_first_name;
 ```
+
+<h1>Querries</h1>
+
+<h2>Task A</h2>
+
+<p>Find the name and surname of the person with the most female grandchildren.</p>
+
+One command
+
+```sql
+SELECT
+    p1.first_name, 
+    p1.last_name,
+    COUNT(p3.person_id) AS female_grandchildren_count
+FROM 
+    people p1
+JOIN 
+    people p2 ON (p2.mother_id = p1.person_id OR p2.father_id = p1.person_id)
+JOIN 
+    people p3 ON (p3.mother_id = p2.person_id OR p3.father_id = p2.person_id)
+WHERE 
+    p3.sex = 'k'
+GROUP BY 
+    p1.person_id
+ORDER BY 
+    female_grandchildren_count DESC
+LIMIT 1;
+```
+
+<h3>View pipeline</h3>
+
+```sql
+CREATE VIEW persons_female_grandchildren_count AS
+    SELECT
+        p1.person_id,
+        p1.first_name, 
+        p1.last_name,
+        COUNT(p3.person_id) AS female_grandchildren_count
+    FROM 
+        people p1
+    JOIN 
+        people p2 ON (p2.mother_id = p1.person_id OR p2.father_id = p1.person_id)
+    JOIN 
+        people p3 ON (p3.mother_id = p2.person_id OR p3.father_id = p2.person_id)
+    WHERE 
+        p3.sex = 'k'
+    GROUP BY 
+        p1.person_id
+;
+SELECT * FROM persons_female_grandchildren_count;
+
+
+CREATE VIEW all_persons_have_max_granddoughter_count AS
+SELECT * FROM persons_female_grandchildren_count
+WHERE 
+    female_grandchildren_count =
+        (SELECT MAX(female_grandchildren_count) FROM persons_female_grandchildren_count)
+;
+SELECT * FROM all_persons_have_max_granddoughter_count;
+
+
+CREATE VIEW one_person_have_max_granddoughter_count AS
+SELECT * FROM all_persons_have_max_granddoughter_count
+ORDER BY person_id ASC
+LIMIT 1;
+SELECT * FROM one_person_have_max_granddoughter_count;
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+SELECT 
+    AVG(CASE WHEN e.contract_type = 'zlecenie' THEN worker_count ELSE NULL END) AS avg_zlecenie_count,
+    AVG(CASE WHEN e.contract_type = 'praca' THEN worker_count ELSE NULL END) AS avg_praca_count,
+    AVG(CASE WHEN e.contract_type = 'zlecenie' THEN p.earnings ELSE NULL END) AS avg_zlecenie_earnings,
+    AVG(CASE WHEN e.contract_type = 'praca' THEN p.earnings ELSE NULL END) AS avg_praca_earnings
+FROM 
+    (
+        SELECT 
+            work_company_id,
+            contract_type,
+            COUNT(worker_id) AS worker_count
+        FROM 
+            employment e
+        GROUP BY 
+            work_company_id, 
+            contract_type
+    ) AS subquery
+JOIN 
+    employment e ON subquery.work_company_id = e.work_company_id AND subquery.contract_type = e.contract_type
+JOIN 
+    people p ON e.worker_id = p.person_id;
+
+
+
+
+
+
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
