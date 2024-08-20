@@ -1,4 +1,4 @@
-INSERT INTO work_company (work_company_id, company_name, chairman_id)
+INSERT INTO work_companies (work_company_id, company_name, chairman_id)
 VALUES
   (1, 'Tech Solutions', 1),
   (2, 'Green Energy Corp', 2),

@@ -48,7 +48,7 @@ CREATE TABLE people (
 );
 
 
-CREATE TABLE work_company (
+CREATE TABLE work_companies (
     -- PK
     work_company_id int NOT NULL UNIQUE,
     company_name varchar(255),
