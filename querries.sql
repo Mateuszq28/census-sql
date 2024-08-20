@@ -61,32 +61,103 @@ LIMIT 1;
 SELECT * FROM one_person_have_max_granddoughter_count;
 
 
+CREATE VIEW TASK_A AS
+SELECT * FROM one_person_have_max_granddoughter_count;
+SELECT * FROM TASK_A;
+
 -- ======
 -- TASK B
 -- ======
 
 -- Present the average number of employees employed under a mandate contract and the average number of employees employed under an employment contract in all companies and the average salary for these contracts.
 
+
+
+-- Chat GPT answer
+
+WITH contract_counts AS (
+    SELECT
+        work_company_id,
+        contract_type,
+        COUNT(worker_id) AS employee_count,
+        AVG(salary) AS average_salary
+    FROM
+        employment
+    GROUP BY
+        work_company_id,
+        contract_type
+)
+
 SELECT
-            emp.work_company_id,
-            w.company_name,
-            AVG( COUNT(SELECT * FROM employment WHERE contract_type = 'mandate' ) GROUP BY work_company_id ),
-            AVG( (SELECT salary FROM employment WHERE contract_type = 'mandate' ) GROUP BY work_company_id )
-        FROM
-            employment emp
-        JOIN
-            work_company w
+    contract_type,
+    AVG(employee_count) AS avg_employee_count,
+    AVG(average_salary) AS avg_salary
+FROM
+    contract_counts
+GROUP BY
+    contract_type;
+
+-- output:
+-- employment|10.0|14360.5565833333
+-- mandate|9.0|14763.3918518519
 
 
+-- My edit of Chat GPT answer
+
+WITH contract_counts AS (
+    SELECT
+        work_company_id,
+        contract_type,
+        COUNT(worker_id) AS employee_count,
+        AVG(salary) AS average_salary
+    FROM
+        employment
+    GROUP BY
+        work_company_id,
+        contract_type
+)
+
+SELECT
+    work_company_id,
+    contract_type,
+    AVG(employee_count) AS avg_employee_count,
+    AVG(average_salary) AS avg_salary
+FROM
+    contract_counts
+GROUP BY
+    work_company_id,
+    contract_type;
 
 
-    UNION
-        AVG( COUNT(SELECT * FROM employment WHERE contract_type = 'employment' ) GROUP BY work_company_id )
+-- Result of my ask chat-GPT to correct querry
 
+WITH contract_counts AS (
+    SELECT
+        employment.work_company_id,
+        company_name,
+        contract_type,
+        COUNT(worker_id) AS employee_count,
+        AVG(salary) AS average_salary
+    FROM
+        employment, work_companies
+    GROUP BY
+        employment.work_company_id,
+        contract_type
+)
 
-
-
-SELECT * FROM employment WHERE contract_type = 'mandate'
+SELECT
+    cc1.work_company_id,
+    cc1.company_name,
+    COALESCE(cc1.employee_count, 0) AS mandate_employee_count,
+    COALESCE(cc1.average_salary, 0) AS mandate_avg_salary,
+    COALESCE(cc2.employee_count, 0) AS employment_employee_count,
+    COALESCE(cc2.average_salary, 0) AS employment_avg_salary
+FROM
+    (SELECT * FROM contract_counts WHERE contract_type = 'mandate') cc1
+LEFT JOIN
+    (SELECT * FROM contract_counts WHERE contract_type = 'employment') cc2
+ON
+    cc1.work_company_id = cc2.work_company_id;
 
 
 
@@ -118,7 +189,7 @@ FROM employment e WHERE e.contract_type = 'employment'
 GROUP BY e.work_company_id;
 SELECT * FROM e_c_id__e_e_count;
 
-
+-- ++++++++++++++++++++++++++++++++++++++
 
 -- average mandates salary, group by company
 -- employment_company_id__employment_contract_type=mandate_salary
@@ -144,17 +215,15 @@ FROM employment e WHERE e.contract_type = 'employment'
 GROUP BY e.work_company_id;
 SELECT * FROM e_c_id__e_avg_e_s;
 
-
+-- ++++++++++++++++++++++++++++++++++++++
 
 DROP VIEW company_id_mandate_count_avg;
 CREATE VIEW company_id_mandate_count_avg AS
 SELECT
 e_c_id__e_m_count.work_company_id,
 e_c_id__e_m_count.contract_type,
-e_c_id__e_m_count.mandate_count,
-e_c_id__e_avg_m_s.mandate_avg_salary,
-e_c_id__e_m_count.mandate_count * e_c_id__e_avg_m_s.mandate_avg_salary
-AS avg_times_count
+mandate_count,
+mandate_avg_salary
 FROM e_c_id__e_m_count, e_c_id__e_avg_m_s
 GROUP BY e_c_id__e_m_count.work_company_id;
 SELECT * FROM company_id_mandate_count_avg;
@@ -164,67 +233,40 @@ CREATE VIEW company_id_employment_count_avg AS
 SELECT
 e_c_id__e_e_count.work_company_id,
 e_c_id__e_e_count.contract_type,
-e_c_id__e_e_count.employment_count,
-e_c_id__e_avg_e_s.employment_avg_salary
+employment_count,
+employment_avg_salary
 FROM e_c_id__e_e_count, e_c_id__e_avg_e_s
 GROUP BY e_c_id__e_e_count.work_company_id;
 SELECT * FROM company_id_employment_count_avg;
 
 
 
+-- ++++++++++++++++++++++++++++++++++++++
 
+-- TO TEST JOIN
+SELECT * FROM employment WHERE contract_type = 'mandate' AND work_company_id = 1;
+DELETE FROM employment WHERE contract_type = 'mandate' AND work_company_id = 1;
+SELECT * FROM employment WHERE contract_type = 'mandate' AND work_company_id = 1;
 
+-- TO TEST JOIN
+SELECT * FROM employment WHERE contract_type = 'employment' AND work_company_id = 2;
+DELETE FROM employment WHERE contract_type = 'employment' AND work_company_id = 2;
+SELECT * FROM employment WHERE contract_type = 'employment' AND work_company_id = 2;
 
+-- ++++++++++++++++++++++++++++++++++++++
 
-DROP VIEW company_id_mandate_count_avg;
-CREATE VIEW company_id_mandate_count_avg AS
+-- FINAL VIEW
 
+DROP VIEW TASK_B;
+CREATE VIEW TASK_B AS
 SELECT
-e_c_id__e_m_count.contract_type,
-AVG(e_c_id__e_m_count.mandate_count),
-e_c_id__e_avg_m_s.mandate_avg_salary
-FROM e_c_id__e_m_count, e_c_id__e_avg_m_s
-GROUP BY e_c_id__e_m_count.work_company_id;
-
-SELECT * FROM company_id_mandate_count_avg;
+* FROM company_id_mandate_count_avg
+FULL OUTER JOIN company_id_employment_count_avg ON
+company_id_mandate_count_avg.work_company_id =
+company_id_employment_count_avg.work_company_id;
+SELECT * FROM TASK_B;
 
 
-
--------------------------
-
-
-
-
-
-
-
-SELECT
-AVG(e_c_id__e_m_count.mandate_count),
-AVG(e_c_id__e_e_count.mandate_count)
-FROM e_c_id__e_m_count, e_c_id__e_e_count
-
-
-
-JOIN work_companies c
-
-
-
-ON work_company_id = w.work_company_id
-
-
-
-
-
-
-
-
-
-
-
-WITH mandates AS (
-    SELECT * FROM employment WHERE contract_type = 'mandate'
-)
-SELECT
-COUNT( mandates ) GROUP BY work_company_id
-
-
+-- ======
+-- TASK c
+-- ======
