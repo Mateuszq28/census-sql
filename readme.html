@@ -69,6 +69,25 @@ SET client_encoding = 'UTF8';
 </ul>
 <p>Chat GPT an Perplexity were used to generate data to feed the database.</p>
 
+Find duplcated PESELs - works
+
+```shell
+grep -oE '\b[0-9]{11}\b' add_people.sql | sort | uniq -d
+```
+
+Find duplcated PESELs - doesn't work
+
+```shell
+# regex
+\b(\d{11})\b(?=.*\b\1\b)
+
+grep -oE '\b[0-9]{11}\b' add_people.sql | sort | uniq -d | grep -Ff - add_people.sql
+
+# didn't try
+grep -oE '\b[0-9]{11}\b' add_people.sql | awk '{count[$0]++} END {for (num in count) if (count[num] > 1) print num}'
+```
+
+
 
 
 
