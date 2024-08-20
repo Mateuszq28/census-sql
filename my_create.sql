@@ -25,7 +25,6 @@ CREATE TABLE people (
 
     country varchar(255) CHECK
     ( country = 'POLAND' ),
-    earnings float,
 
     -- PK
     PRIMARY KEY (person_id),
@@ -75,6 +74,7 @@ CREATE TABLE employment (
     contract_type varchar(255) CHECK
     ( contract_type = 'zlecenie' OR
       contract_type = 'praca' ),
+    salary float,
 
     -- PK
     PRIMARY KEY (job_id),

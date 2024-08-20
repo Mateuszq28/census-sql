@@ -202,49 +202,7 @@ SELECT * FROM one_person_have_max_granddoughter_count;
 ```
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-SELECT 
-    AVG(CASE WHEN e.contract_type = 'zlecenie' THEN worker_count ELSE NULL END) AS avg_zlecenie_count,
-    AVG(CASE WHEN e.contract_type = 'praca' THEN worker_count ELSE NULL END) AS avg_praca_count,
-    AVG(CASE WHEN e.contract_type = 'zlecenie' THEN p.earnings ELSE NULL END) AS avg_zlecenie_earnings,
-    AVG(CASE WHEN e.contract_type = 'praca' THEN p.earnings ELSE NULL END) AS avg_praca_earnings
-FROM 
-    (
-        SELECT 
-            work_company_id,
-            contract_type,
-            COUNT(worker_id) AS worker_count
-        FROM 
-            employment e
-        GROUP BY 
-            work_company_id, 
-            contract_type
-    ) AS subquery
-JOIN 
-    employment e ON subquery.work_company_id = e.work_company_id AND subquery.contract_type = e.contract_type
-JOIN 
-    people p ON e.worker_id = p.person_id;
-
-
-
+<h2>Task B</h2>
 
 
 
