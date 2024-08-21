@@ -138,7 +138,7 @@ ON people (person_id, wife_id, father_id);
 CREATE INDEX
 idx_oneGenerationFamily_withParents_womanAsRoot
 ON people (person_id, husband_id, mother_id);
-```sql
+```
 
 Deleting Indexes Example<br/>
 
