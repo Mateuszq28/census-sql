@@ -113,7 +113,7 @@ Remove earnings from insert querry
 
 ```shell
 sed -E 's/(, earnings)//; s/,\s[0-9]+\.[0-9]+\)/\)/' add_people.sql > output_file.sql
-```shell
+```
 
 Adding salary column to insert querry add_employment.sql<br/>
 See <i>modify_add_employment.py</i><br/>
