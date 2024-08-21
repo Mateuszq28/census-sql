@@ -388,32 +388,34 @@ Limit 1
 -- ============================================
 
 
+DROP VIEW person_with_pointers;
 CREATE VIEW person_with_pointers AS
 SELECT
 p.person_id,
 p.first_name,
 p.last_name
 FROM people p
-LEFT JOIN people m
+INNER JOIN people m
 ON p.mother_id = m.person_id
-LEFT JOIN people f
+INNER JOIN people f
 ON p.father_id = f.person_id
-LEFT JOIN people w
+INNER JOIN people w
 ON p.wife_id = w.person_id
-LEFT JOIN people h
+INNER JOIN people h
 ON p.husband_id = h.person_id;
 SELECT * FROM person_with_pointers;
 
 
+DROP VIEW person_with_merriage_pointers;
 CREATE VIEW person_with_merriage_pointers AS
 SELECT
 p.person_id,
 p.first_name,
 p.last_name
 FROM people p
-LEFT JOIN people w
+INNER JOIN people w
 ON p.wife_id = w.person_id
-LEFT JOIN people h
+INNER JOIN people h
 ON p.husband_id = h.person_id;
 SELECT * FROM person_with_merriage_pointers;
 
@@ -425,9 +427,9 @@ p.person_id,
 p.first_name,
 p.last_name
 FROM people p
-LEFT JOIN people m
+INNER JOIN people m
 ON p.mother_id = m.person_id
-LEFT JOIN people f
+INNER JOIN people f
 ON p.father_id = f.person_id;
 SELECT * FROM person_with_parent_pointers;
 
@@ -478,11 +480,69 @@ BEGIN
     );
 END;
 
-
 CREATE VIEW family_member_list AS
 SELECT
 FIND_PERSON_FAMILY_MEMBERS_LIST *
 FROM people;
+
+-- ==================================================
+
+
+CREATE VIEW family_member_list AS
+
+-- self
+
+SELECT
+p.person_id,
+p.first_name,
+p.last_name
+FROM people p
+RIGHT JOIN people pid
+ON p.person_id = pid.person_id 
+
+-- wife/husband + children
+UNION
+
+SELECT
+pwp.person_id,
+pwp.first_name,
+pwp.last_name
+FROM people pwp
+INNER JOIN people pid
+ON pwp.mother_id = pid.person_id 
+
+UNION
+SELECT
+pwp.person_id,
+pwp.first_name,
+pwp.last_name
+FROM person_with_pointers pwp
+RIGHT JOIN people pid
+ON pwp.mother_id = pid.person_id 
+UNION
+SELECT
+pwp.person_id,
+pwp.first_name,
+pwp.last_name
+FROM person_with_pointers pwp
+RIGHT JOIN people pid
+ON pwp.wife_id = pid.person_id 
+UNION
+SELECT
+pwp.person_id,
+pwp.first_name,
+pwp.last_name
+FROM person_with_pointers pwp
+RIGHT JOIN people pid
+ON pwp.husband_id = pid.person_id 
+
+-- UNION
+
+--- here parents of our childrens
+--- here merriage of our childrens
+--- here parents merriage of our childrens
+
+-- ==================================================
 
 
 CREATE VIEW family_member AS
