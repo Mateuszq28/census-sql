@@ -451,7 +451,9 @@ SELECT * FROM TASK_B;
 
 <h2>Task C</h2>
 
-<p>Find a family (at most 2 generations) that earns the least. Provide the name and surname of any person in that family.<p/>
+<p>Find a family (at most 2 generations) that earns the least. Provide the name and surname of any person in that family.<p/><br/><br/>
+
+<p>Task not ready, but in querries.sql are my attempts.</p>
 
 
 

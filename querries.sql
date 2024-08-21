@@ -302,6 +302,30 @@ SELECT * FROM TASK_B;
 -- Find a family (at most 2 generations) that earns the least. Provide the name and surname of any person in that family.
 
 
+
+
+
+
+
+
+-- TASK c is not ready, but here are my attempts:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 CREATE FUNCTION GetPrice (Vendor CHAR(20), Pid INT)         
     RETURNS  DECIMAL(10,3) 
     LANGUAGE SQL  
