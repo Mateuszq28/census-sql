@@ -384,12 +384,13 @@ w.person_id,
 w.first_name,
 w.last_name,
 COALESCE(e.salary, 0)
-WHERE
-family_id = w.husband_id
-AND
-e.worker_id = w.person_id
 FROM
 people w
+WHERE
+p.person_id = w.husband_id
+AND
+e.worker_id = w.person_id
+
 
 
 
