@@ -314,6 +314,92 @@ SELECT * FROM TASK_B;
 
 
 
+-- SELECT
+-- p.person_id,
+-- p.first_name,
+-- p.last_name,
+-- COALESCE(e.salary, 0)
+-- FROM
+-- people p
+
+-- LEFT JOIN
+-- employment e
+-- ON
+-- e.worker_id = p.person_id
+
+-- CROSS JOIN
+-- w.person_id,
+-- w.first_name,
+-- w.last_name
+-- FROM people w
+-- WHERE EXISTS
+-- (SELECT person_id
+-- FROM people
+-- WHERE
+-- husband_id = p.person_id)
+-- ON p.wife_id = w.person_id
+
+-- CROSS JOIN
+-- h.person_id,
+-- h.first_name,
+-- h.last_name
+-- FROM people h
+-- WHERE EXISTS
+-- (SELECT person_id
+-- FROM people
+-- WHERE
+-- wife_id = p.person_id)
+
+
+
+
+
+SELECT
+p.person_id AS family_id,
+p.person_id,
+p.first_name,
+p.last_name,
+COALESCE(e.salary, 0)
+FROM
+people p
+
+LEFT JOIN
+employment e
+ON
+e.worker_id = p.person_id
+OR
+e.worker_id = w.person_id
+-- OR
+-- e.worker_id = h.person_id
+-- OR
+-- e.worker_id = ch.person_id
+
+WHERE e.worker_id = p.person_id
+
+UNION
+
+SELECT
+family_id,
+w.person_id,
+w.first_name,
+w.last_name,
+COALESCE(e.salary, 0)
+WHERE
+family_id = w.husband_id
+AND
+e.worker_id = w.person_id
+FROM
+people w
+
+
+
+
+
+
+LEFT JOIN
+employment ew
+ON
+ew.worker_id = w.person_id
 
 
 
@@ -325,6 +411,12 @@ SELECT * FROM TASK_B;
 
 
 
+
+
+
+
+
+-- FUNCTION EXAMPLE
 
 CREATE FUNCTION GetPrice (Vendor CHAR(20), Pid INT)         
     RETURNS  DECIMAL(10,3) 
@@ -346,6 +438,9 @@ END
 
 
 
+
+-- PSEUDO CODE
+
 ------------------------v1
 select * from
 {
@@ -363,6 +458,9 @@ dla każdej osoby:
 }
 ORDER by sumSalaries ASC
 Limit 1
+
+
+-- PSEUDO CODE - commented = done
 
 ------------------------v2
 -- select * from
@@ -388,6 +486,7 @@ Limit 1
 -- ============================================
 
 
+-- must have mother, father, wife, husband -> there are nos such records
 DROP VIEW person_with_pointers;
 CREATE VIEW person_with_pointers AS
 SELECT
@@ -406,6 +505,7 @@ ON p.husband_id = h.person_id;
 SELECT * FROM person_with_pointers;
 
 
+-- must have wife, husband -> there are nos such records
 DROP VIEW person_with_merriage_pointers;
 CREATE VIEW person_with_merriage_pointers AS
 SELECT
@@ -420,6 +520,7 @@ ON p.husband_id = h.person_id;
 SELECT * FROM person_with_merriage_pointers;
 
 
+-- must have both parents
 DROP VIEW person_with_parent_pointers;
 CREATE VIEW person_with_parent_pointers AS
 SELECT
@@ -512,6 +613,7 @@ INNER JOIN people pid
 ON pwp.mother_id = pid.person_id 
 
 UNION
+
 SELECT
 pwp.person_id,
 pwp.first_name,
@@ -519,7 +621,9 @@ pwp.last_name
 FROM person_with_pointers pwp
 RIGHT JOIN people pid
 ON pwp.mother_id = pid.person_id 
+
 UNION
+
 SELECT
 pwp.person_id,
 pwp.first_name,
@@ -527,7 +631,9 @@ pwp.last_name
 FROM person_with_pointers pwp
 RIGHT JOIN people pid
 ON pwp.wife_id = pid.person_id 
+
 UNION
+
 SELECT
 pwp.person_id,
 pwp.first_name,
@@ -541,6 +647,7 @@ ON pwp.husband_id = pid.person_id
 --- here parents of our childrens
 --- here merriage of our childrens
 --- here parents merriage of our childrens
+
 
 -- ==================================================
 
@@ -567,9 +674,28 @@ SELECT * FROM person_family_income pfi
 ORDER BY pfi.family_income ASC
 Limit 1;
 
-
+-- If the function were working 
 
 ==============================================
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
