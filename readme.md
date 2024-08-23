@@ -405,7 +405,7 @@ ON
 SELECT * FROM gpt_3;
 ```
 
-output (wrong, but interesting)
+output
 ```
 sqlite> SELECT * FROM gpt_3;
 work_company_id  company_name          mandate_employee_count  mandate_avg_salary  employment_employee_count  employment_avg_salary
