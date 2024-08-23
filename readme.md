@@ -1,8 +1,8 @@
 <h1>SQL Databse and it's querries.</h1>
 
-<h2><a href="#task_a">Querry - Task A<a/><h2/>
-<h2><a href="#task_b">Querry - Task B<a/><h2/>
-<h2><a href="#task_c">Querry - Task C<a/><h2/>
+<h3><a href="#task_a">Querry - Task A<a/><h3/>
+<h3><a href="#task_b">Querry - Task B<a/><h3/>
+<h3><a href="#task_c">Querry - Task C<a/><h3/>
 
 <h2>SQLite</h2>
 
@@ -559,9 +559,15 @@ work_company_id  company_name          contract_type  employment_count  employme
 ```
 
 
+<!-- =============================================================================== -->
+
+
 <h2>Task C</h2>
 
 <p>Find a family (at most 2 generations) that earns the least. Provide the name and surname of any person in that family.<p/>
+
+
+<img src="TASK_C.gif" alt="task c table graph">
 
 
 ```sql
