@@ -4,6 +4,59 @@
 
 -- Find the name and surname of the person with the most female grandchildren.
 
+-- Men - sex = 'm'
+-- Woman - sex = 'k'
+
+-- =================================================================================================================
+-- Add test records
+
+UPDATE people
+SET first_name = 'Granny', last_name = 'The most of granddoughters'
+WHERE person_id = 155;
+
+UPDATE people
+SET first_name = 'Granny', last_name = 'The most of grandsons'
+WHERE person_id = 256;
+
+INSERT INTO people
+( person_id, pesel, first_name, last_name, birth_date, sex, mother_id, father_id, wife_id, husband_id, country )
+VALUES
+  -- granny with a lot of granddoughters
+  (301, 75012280041, 'Mother', 'The most of granddoughters', '1998-01-22', 'k', 155, NULL, NULL, NULL, 'POLAND'),
+  (302, 99312280042, 'Granddoughter', 'The most of granddoughters', '1998-01-22', 'k', 301, NULL, NULL, NULL, 'POLAND'),
+  (303, 99312280043, 'Granddoughter', 'The most of granddoughters', '1998-01-22', 'k', 301, NULL, NULL, NULL, 'POLAND'),
+  (304, 99312280044, 'Granddoughter', 'The most of granddoughters', '1998-01-22', 'k', 301, NULL, NULL, NULL, 'POLAND'),
+  (305, 99312280045, 'Granddoughter', 'The most of granddoughters', '1998-01-22', 'k', 301, NULL, NULL, NULL, 'POLAND'),
+  (306, 99312280046, 'Granddoughter', 'The most of granddoughters', '1998-01-22', 'k', 301, NULL, NULL, NULL, 'POLAND'),
+  (307, 99312280047, 'Granddoughter', 'The most of granddoughters', '1998-01-22', 'k', 301, NULL, NULL, NULL, 'POLAND'),
+  (308, 99312280048, 'Granddoughter', 'The most of granddoughters', '1998-01-22', 'k', 301, NULL, NULL, NULL, 'POLAND'),
+  (309, 99312280049, 'Granddoughter', 'The most of granddoughters', '1998-01-22', 'k', 301, NULL, NULL, NULL, 'POLAND'),
+  (310, 99312280050, 'Granddoughter', 'The most of granddoughters', '1998-01-22', 'k', 301, NULL, NULL, NULL, 'POLAND'),
+  (311, 99312280051, 'Granddoughter', 'The most of granddoughters', '1998-01-22', 'k', 301, NULL, NULL, NULL, 'POLAND'),
+  -- second granny (with boys)
+  (312, 95012280041, 'Mother', 'The most of granddoughters', '1998-01-22', 'k', 256, NULL, NULL, NULL, 'POLAND'),
+  (313, 85012280042, 'Grandson', 'The most of granddoughters', '1998-01-22', 'm', 312, NULL, NULL, NULL, 'POLAND'),
+  (314, 85012280043, 'Grandson', 'The most of granddoughters', '1998-01-22', 'm', 312, NULL, NULL, NULL, 'POLAND'),
+  (315, 85012280044, 'Grandson', 'The most of granddoughters', '1998-01-22', 'm', 312, NULL, NULL, NULL, 'POLAND'),
+  (316, 85012280045, 'Grandson', 'The most of granddoughters', '1998-01-22', 'm', 312, NULL, NULL, NULL, 'POLAND'),
+  (317, 85012280046, 'Grandson', 'The most of granddoughters', '1998-01-22', 'm', 312, NULL, NULL, NULL, 'POLAND'),
+  (318, 85012280047, 'Grandson', 'The most of granddoughters', '1998-01-22', 'm', 312, NULL, NULL, NULL, 'POLAND'),
+  (319, 85012280048, 'Grandson', 'The most of granddoughters', '1998-01-22', 'm', 312, NULL, NULL, NULL, 'POLAND'),
+  (320, 85012280049, 'Grandson', 'The most of granddoughters', '1998-01-22', 'm', 312, NULL, NULL, NULL, 'POLAND'),
+  (321, 85012280050, 'Grandson', 'The most of granddoughters', '1998-01-22', 'm', 312, NULL, NULL, NULL, 'POLAND'),
+  (322, 85012280051, 'Grandson', 'The most of granddoughters', '1998-01-22', 'm', 312, NULL, NULL, NULL, 'POLAND'),
+  (323, 85012280052, 'Grandson', 'The most of granddoughters', '1998-01-22', 'm', 312, NULL, NULL, NULL, 'POLAND'),
+  (324, 85012280053, 'Grandson', 'The most of granddoughters', '1998-01-22', 'm', 312, NULL, NULL, NULL, 'POLAND'),
+  (325, 85012280054, 'Grandson', 'The most of granddoughters', '1998-01-22', 'm', 312, NULL, NULL, NULL, 'POLAND'),
+  (326, 85012280055, 'Grandson', 'The most of granddoughters', '1998-01-22', 'm', 312, NULL, NULL, NULL, 'POLAND'),
+  (327, 85012280056, 'Grandson', 'The most of granddoughters', '1998-01-22', 'm', 312, NULL, NULL, NULL, 'POLAND');
+
+-- =================================================================================================================
+
+
+
+-- Solved by one command using chat-gpt help
+
 SELECT
     p1.first_name, 
     p1.last_name,
@@ -22,7 +75,13 @@ ORDER BY
     female_grandchildren_count DESC
 LIMIT 1;
 
+-- output:
+-- first_name  last_name                   female_grandchildren_count
+-- ----------  --------------------------  --------------------------
+-- Granny      The most of granddoughters  10
 
+
+-- my method with a use of views
 -- Views
 
 DROP VIEW persons_female_grandchildren_count;
@@ -66,6 +125,14 @@ CREATE VIEW TASK_A AS
 SELECT * FROM one_person_have_max_granddoughter_count;
 SELECT * FROM TASK_A;
 
+-- output:
+-- sqlite> SELECT * FROM TASK_A;
+-- person_id  first_name  last_name                   female_grandchildren_count
+-- ---------  ----------  --------------------------  --------------------------
+-- 155        Granny      The most of granddoughters  10
+-- sqlite>
+
+
 -- ======
 -- TASK B
 -- ======
@@ -76,6 +143,7 @@ SELECT * FROM TASK_A;
 
 -- Chat GPT answer
 
+DROP VIEW gpt_1;
 CREATE VIEW gpt_1 AS
 WITH contract_counts AS (
     SELECT
@@ -100,13 +168,18 @@ GROUP BY
     contract_type;
 SELECT * FROM gpt_1;
 
--- output:
--- employment|10.0|14360.5565833333
--- mandate|9.0|14763.3918518519
+-- output (wrong):
+-- sqlite> SELECT * FROM gpt_1;
+-- contract_type  avg_employee_count  avg_salary
+-- -------------  ------------------  ----------------
+-- employment     10.0                14360.5565833333
+-- mandate        9.0                 14763.3918518519
+-- sqlite>
 
 
 -- My edit of Chat GPT answer
 
+DROP VIEW gpt_2;
 CREATE VIEW gpt_2 AS
 WITH contract_counts AS (
     SELECT
@@ -131,7 +204,21 @@ FROM
 GROUP BY
     work_company_id,
     contract_type;
-SELECT * FROM gpt_1;
+SELECT * FROM gpt_2;
+
+-- output (wrong, but interesting):
+-- sqlite> SELECT * FROM gpt_2;
+-- work_company_id  contract_type  avg_employee_count  avg_salary
+-- ---------------  -------------  ------------------  ----------------
+-- 1                employment     10.0                10467.879
+-- 2                mandate        9.0                 15747.3622222222
+-- 3                employment     10.0                11836.202
+-- 3                mandate        9.0                 14710.3266666667
+-- 4                employment     10.0                15872.558
+-- 4                mandate        9.0                 18280.0877777778
+-- 5                employment     10.0                15871.64
+-- 5                mandate        9.0                 14347.32
+-- ...
 
 
 -- Result of my ask chat-GPT to correct querry
@@ -171,9 +258,19 @@ ON
 SELECT * FROM gpt_3;
 
 
+-- output:
+-- sqlite> SELECT * FROM gpt_3;
+-- work_company_id  company_name          mandate_employee_count  mandate_avg_salary  employment_employee_count  employment_avg_salary
+-- ---------------  --------------------  ----------------------  ------------------  -------------------------  ---------------------
+-- 2                Green Energy Corp     9                       15747.3622222222    0                          0
+-- 3                Innovatech            9                       14710.3266666667    10                         11836.202
+-- 4                Blue Horizon          9                       18280.0877777778    10                         15872.558
+-- 5                Quantum Industries    9                       14347.32            10                         15871.64
+-- 6                Future Vision         9                       15932.1711111111    10                         12926.978
+-- ...
 
 
--- MY VIEWS
+-- MY method to solve it by VIEWS
 -------------------------
 
 -- count mandates, group by company
@@ -295,92 +392,25 @@ GROUP BY no_name.work_company_id;
 SELECT * FROM TASK_B;
 
 
+-- output:
+-- sqlite> SELECT * FROM TASK_B;
+-- work_company_id  company_name          contract_type  employment_count  employment_avg_salary
+-- ---------------  --------------------  -------------  ----------------  ---------------------
+--                                                       10                10467.879
+-- 2                Green Energy Corp     mandate
+-- 3                Innovatech            mandate        10                10467.879
+-- 4                Blue Horizon          mandate        10                10467.879
+-- 5                Quantum Industries    mandate        10                10467.879
+-- 6                Future Vision         mandate        10                10467.879
+-- ...
+
+
+
 -- ======
 -- TASK c
 -- ======
 
 -- Find a family (at most 2 generations) that earns the least. Provide the name and surname of any person in that family.
-
-
-
-
-
-
-
-
--- TASK c is not ready, but here are my attempts:
-
-
-
-
-
-SELECT
-p.person_id AS family_id,
-p.first_name,
-p.last_name,
-COALESCE(e.salary, 0)
-FROM
-people p
-
-LEFT JOIN
-employment e
-ON
-e.worker_id = p.person_id
-
-CROSS JOIN
-
-(
-SELECT
-w.person_id,
-w.first_name,
-w.last_name
-COALESCE(ew.salary, 0)
-FROM people w
-ON w.husband_id = family_id
-
-LEFT JOIN
-employment ew
-ON
-e.worker_id = w.person_id
-);
-
-
-CROSS JOIN
-h.person_id,
-h.first_name,
-h.last_name
-FROM people h
-WHERE EXISTS
-(SELECT person_id
-FROM people
-WHERE
-wife_id = p.person_id)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -474,7 +504,7 @@ pfms.person_id,
 pfms.person_first_name,
 pfms.person_last_name
 -- ORDER BY person_id;
-ORDER BY family_income DESC;
+ORDER BY family_income ASC;
 SELECT * FROM persons_family_income;
 
 ------------------------------------------- GOOD
@@ -486,538 +516,11 @@ SELECT * FROM persons_family_income
 LIMIT 1;
 SELECT * FROM TASK_C;
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
--- SELECT
--- p.person_id AS family_id,
--- p.person_id,
--- p.first_name,
--- p.last_name,
--- COALESCE(e.salary, 0)
--- FROM
--- people p
-
--- LEFT JOIN
--- employment e
--- ON
--- e.worker_id = p.person_id
--- OR
--- e.worker_id = w.person_id
--- -- OR
--- -- e.worker_id = h.person_id
--- -- OR
--- -- e.worker_id = ch.person_id
-
--- WHERE e.worker_id = p.person_id
-
--- UNION
-
--- SELECT
--- family_id,
--- w.person_id,
--- w.first_name,
--- w.last_name,
--- COALESCE(e.salary, 0)
--- FROM
--- people w
--- WHERE
--- p.person_id = w.husband_id
--- AND
-e.worker_id = w.person_id
-
-
-
-
-
-
-
-LEFT JOIN
-employment ew
-ON
-ew.worker_id = w.person_id
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
--- FUNCTION EXAMPLE
-
-CREATE FUNCTION GetPrice (Vendor CHAR(20), Pid INT)         
-    RETURNS  DECIMAL(10,3) 
-    LANGUAGE SQL  
-    MODIFIES SQL
-    BEGIN 
-    DECLARE price DECIMAL(10,3); 
-
-    IF Vendor = 'Vendor 1' 
-        THEN SET price = (SELECT ProdPrice FROM V1Table WHERE Id = Pid); 
-    ELSE IF Vendor = 'Vendor 2' 
-        THEN SET price = (SELECT Price 
-                        FROM V2Table 
-                        WHERE Pid = GetPrice.Pid); 
-    END IF; 
-
-    RETURN price; 
-END 
-
-
-
-
--- PSEUDO CODE
-
-------------------------v1
-select * from
-{
-dla każdej osoby:
-    znajdź wszystkie osoby, które w polu mother_id lub father_ir mają twoje id
-    dla każdej z tych znalezioncyb osób:
-        dodaj do głównej listy żonę, męża, matkę, ojca if not in list
-    
-    dodaj do tej listy swoją żonę lub męża  if not in list
-
-
-    zarobki = lista.map(p => SuMsalary(p.id))
-
-    sum(zarobki)
-}
-ORDER by sumSalaries ASC
-Limit 1
-
-
--- PSEUDO CODE - commented = done
-
-------------------------v2
--- select * from
--- {
--- dla każdej osoby:
-
-
---     znajdź wszystkie osoby, które w polu mother_id lub father_ir mają twoje id
---     dla każdej z tych znalezioncyb osób:
---         dodaj do głównej listy żonę, męża, matkę, ojca if not in list
-    
---     dodaj do tej listy swoją żonę lub męża  if not in list
-
-
-    -- zarobki = lista.map(p => SuMsalary(p.id))
-
-    -- sum(zarobki)
-}
--- ORDER by sumSalaries ASC
--- Limit 1
-
-
--- ============================================
-
-
--- must have mother, father, wife, husband -> there are nos such records
-DROP VIEW person_with_pointers;
-CREATE VIEW person_with_pointers AS
-SELECT
-p.person_id,
-p.first_name,
-p.last_name
-FROM people p
-INNER JOIN people m
-ON p.mother_id = m.person_id
-INNER JOIN people f
-ON p.father_id = f.person_id
-INNER JOIN people w
-ON p.wife_id = w.person_id
-INNER JOIN people h
-ON p.husband_id = h.person_id;
-SELECT * FROM person_with_pointers;
-
-
--- must have wife, husband -> there are nos such records
-DROP VIEW person_with_merriage_pointers;
-CREATE VIEW person_with_merriage_pointers AS
-SELECT
-p.person_id,
-p.first_name,
-p.last_name
-FROM people p
-INNER JOIN people w
-ON p.wife_id = w.person_id
-INNER JOIN people h
-ON p.husband_id = h.person_id;
-SELECT * FROM person_with_merriage_pointers;
-
-
--- must have both parents
-DROP VIEW person_with_parent_pointers;
-CREATE VIEW person_with_parent_pointers AS
-SELECT
-p.person_id,
-p.first_name,
-p.last_name
-FROM people p
-INNER JOIN people m
-ON p.mother_id = m.person_id
-INNER JOIN people f
-ON p.father_id = f.person_id;
-SELECT * FROM person_with_parent_pointers;
-
-
--- ===================================================
-
-
-CREATE FUNCTION FIND_PERSON_FAMILY_MEMBERS_LIST (pid int)
-RETURNS TABLE (
-    person_id int,
-    first_name varchar(255),
-    last_name varchar(255)
-)
-LANGUAGE SQL
-READS SQL DATA
-BEGIN
-    RETURN
-    (
-
-        -- self
-
-        SELECT
-        p.person_id,
-        p.first_name,
-        p.last_name
-        FROM people p
-        WHERE p.person_id = pid
-
-        -- wife/husband + children
-        UNION
-
-        SELECT
-        pwp.person_id,
-        pwp.first_name,
-        pwp.last_name
-        FROM person_with_pointers pwp
-        WHERE pwp.m.person_id = pid
-        OR pwp.f.person_id = pid
-        OR pwp.w.person_id = pid
-        OR pwp.h.person_id = pid
-
-        -- UNION
-
-        --- here parents of our childrens
-        --- here merriage of our childrens
-        --- here parents merriage of our childrens
-
-    );
-END;
-
-CREATE VIEW family_member_list AS
-SELECT
-FIND_PERSON_FAMILY_MEMBERS_LIST *
-FROM people;
-
--- ==================================================
-
-
-CREATE VIEW family_member_list AS
-
--- self
-
-SELECT
-p.person_id,
-p.first_name,
-p.last_name
-FROM people p
-RIGHT JOIN people pid
-ON p.person_id = pid.person_id 
-
--- wife/husband + children
-UNION
-
-SELECT
-pwp.person_id,
-pwp.first_name,
-pwp.last_name
-FROM people pwp
-INNER JOIN people pid
-ON pwp.mother_id = pid.person_id 
-
-UNION
-
-SELECT
-pwp.person_id,
-pwp.first_name,
-pwp.last_name
-FROM person_with_pointers pwp
-RIGHT JOIN people pid
-ON pwp.mother_id = pid.person_id 
-
-UNION
-
-SELECT
-pwp.person_id,
-pwp.first_name,
-pwp.last_name
-FROM person_with_pointers pwp
-RIGHT JOIN people pid
-ON pwp.wife_id = pid.person_id 
-
-UNION
-
-SELECT
-pwp.person_id,
-pwp.first_name,
-pwp.last_name
-FROM person_with_pointers pwp
-RIGHT JOIN people pid
-ON pwp.husband_id = pid.person_id 
-
--- UNION
-
---- here parents of our childrens
---- here merriage of our childrens
---- here parents merriage of our childrens
-
-
--- ==================================================
-
-
-CREATE VIEW family_member AS
-fml.person_id,
-fml.first_name,
-fml.last_name,
-fml.SUM_MEMBER_SALARY(person_id) AS member_income
-FROM family_member_list fml;
-
-
-CREATE VIEW person_family_income AS
-SELECT fm.person_id,
-       fm.first_name,
-       fm.last_name,
-       SUM(fm.member_income) AS family_income
-FROM family_member fm
-GROUP BY fm.person_id, fm.idx_first_name, fm.last_name;
-
-
-CREATE VIEW poorest_family AS
-SELECT * FROM person_family_income pfi
-ORDER BY pfi.family_income ASC
-Limit 1;
-
--- If the function were working 
-
-==============================================
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-CREATE FUNCTION person_family_income (Vendor CHAR(20), Pid INT)         
-    RETURNS  DECIMAL(10,3) 
-    LANGUAGE SQL  
-    MODIFIES SQL
-    BEGIN 
-    DECLARE price DECIMAL(10,3); 
-
-    IF Vendor = 'Vendor 1' 
-        THEN SET price = (SELECT ProdPrice FROM V1Table WHERE Id = Pid); 
-    ELSE IF Vendor = 'Vendor 2' 
-        THEN SET price = (SELECT Price 
-                        FROM V2Table 
-                        WHERE Pid = GetPrice.Pid); 
-    END IF; 
-
-    RETURN price; 
-END 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-WITH family_salaries AS (
-    SELECT
-        p.person_id,
-        p.first_name,
-        p.last_name,
-        SUM(e.salary) AS salary,
-        SUM(e1.salary) AS mother_salary,
-        SUM(e2.salary) AS father_salary,
-        SUM(e3.salary) AS wife_salary,
-        SUM(e4.salary) AS husband_salary
-    FROM
-        people p
-    LEFT JOIN
-        employment e ON p.person_id = e.worker_id
-    LEFT JOIN
-        people m ON p.mother_id = m.person_id
-    LEFT JOIN
-        employment e1 ON m.person_id = e1.worker_id
-    LEFT JOIN
-        people f ON p.father_id = f.person_id
-    LEFT JOIN
-        employment e2 ON f.person_id = e2.worker_id
-    LEFT JOIN
-        people w ON p.wife_id = w.person_id
-    LEFT JOIN
-        employment e3 ON w.person_id = e3.worker_id
-    LEFT JOIN
-        people h ON p.husband_id = h.person_id
-    LEFT JOIN
-        employment e4 ON h.person_id = e4.worker_id
-)
-SELECT
-    person_id,
-    first_name,
-    last_name,
-    (salary + mother_salary + father_salary + wife_salary + husband_salary) AS total_family_salary
-FROM
-    family_salaries
-ORDER BY
-    total_family_salary
-LIMIT 1;
-
-
-
-
-
-
-
-
-
-
-
-WITH family_salaries AS (
-    SELECT
-        p.person_id,
-        p.first_name,
-        p.last_name,
-        SUM(e.salary) AS salary,
-        SUM(e1.salary) AS mother_salary,
-        SUM(e2.salary) AS father_salary,
-        SUM(e3.salary) AS wife_salary,
-        SUM(e4.salary) AS husband_salary
-    FROM
-        people p
-    LEFT JOIN
-        employment e ON p.person_id = e.worker_id
-    LEFT JOIN
-        people m ON p.mother_id = m.person_id
-    LEFT JOIN
-        employment e1 ON m.person_id = e1.worker_id
-    LEFT JOIN
-        people f ON p.father_id = f.person_id
-    LEFT JOIN
-        employment e2 ON f.person_id = e2.worker_id
-    LEFT JOIN
-        people w ON p.wife_id = w.person_id
-    LEFT JOIN
-        employment e3 ON w.person_id = e3.worker_id
-    LEFT JOIN
-        people h ON p.husband_id = h.person_id
-    LEFT JOIN
-        employment e4 ON h.person_id = e4.worker_id
-)
-SELECT
-    person_id,
-    first_name,
-    last_name,
-    (salary + mother_salary + father_salary + wife_salary + husband_salary) AS total_family_salary
-FROM
-    family_salaries
-ORDER BY
-    total_family_salary
-LIMIT 1;
+------------------------------------------- GOOD
+
+-- output
+-- sqlite> SELECT * FROM TASK_C;
+-- person_id  person_first_name  person_last_name  family_income
+-- ---------  -----------------  ----------------  -------------
+-- 140        Tomasz             Sadowski          4309.71
+-- sqlite>
