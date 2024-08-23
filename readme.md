@@ -544,6 +544,7 @@ GROUP BY no_name.work_company_id;
 SELECT * FROM TASK_B;
 ```
 
+
 output
 ```
 sqlite> SELECT * FROM TASK_B;
@@ -562,13 +563,33 @@ work_company_id  company_name          contract_type  employment_count  employme
 <!-- =============================================================================== -->
 
 
-<h2>Task C</h2>
+<h2 id="task_c">Task C</h2>
 
 <p>Find a family (at most 2 generations) that earns the least. Provide the name and surname of any person in that family.<p/>
 
 
 <img src="TASK_C.gif" alt="task c table graph">
 
+
+Add test data
+
+```sql
+INSERT INTO people
+( person_id, pesel, first_name, last_name, birth_date, sex, mother_id, father_id, wife_id, husband_id, country )
+VALUES
+(328, 50777801241, 'Poor', 'Family', '1998-01-22', 'm', NULL, NULL, NULL, NULL, 'POLAND');
+
+
+INSERT INTO employment
+(job_id, worker_id, work_company_id, contract_type, salary)
+VALUES
+(476, 328, 25, 'employment', 0.01);
+
+
+DELETE FROM employment WHERE job_id = 353;
+```
+
+Querry
 
 ```sql
 ------------------------------------------- GOOD
@@ -681,6 +702,6 @@ output
 sqlite> SELECT * FROM TASK_C;
 person_id  person_first_name  person_last_name  family_income
 ---------  -----------------  ----------------  -------------
-140        Tomasz             Sadowski          4309.71
+328        Poor               Family            0.01
 sqlite>
 ```
