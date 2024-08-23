@@ -314,7 +314,223 @@ SELECT * FROM TASK_B;
 
 
 
+SELECT
+p.person_id AS family_id,
+p.first_name,
+p.last_name,
+COALESCE(e.salary, 0)
+FROM
+people p
+
+LEFT JOIN
+employment e
+ON
+e.worker_id = p.person_id
+
+CROSS JOIN
+
+(
+SELECT
+w.person_id,
+w.first_name,
+w.last_name
+COALESCE(ew.salary, 0)
+FROM people w
+ON w.husband_id = family_id
+
+LEFT JOIN
+employment ew
+ON
+e.worker_id = w.person_id
+);
+
+
+CROSS JOIN
+h.person_id,
+h.first_name,
+h.last_name
+FROM people h
+WHERE EXISTS
+(SELECT person_id
+FROM people
+WHERE
+wife_id = p.person_id)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+------------------------------------------- GOOD
+
+DROP VIEW persons_family_members;
+CREATE VIEW
+persons_family_members AS
+
+SELECT
+p.person_id AS person_id,
+p.first_name AS person_first_name,
+p.last_name AS person_last_name,
+fm.person_id AS family_member_id,
+fm.first_name AS family_member_first_name,
+fm.last_name AS family_member_last_name
+
+FROM
+people p
+
+CROSS JOIN
+people fm
+WHERE
+fm.person_id IN (
+p.person_id,
+p.husband_id,
+p.mother_id
+)
+OR
+fm.mother_id = p.person_id
+OR
+fm.father_id = p.person_id
+
+ORDER BY
+p.person_id;
+SELECT * FROM persons_family_members;
+
+------------------------------------------- GOOD
+------------------------------------------- GOOD
+
+DROP VIEW persons_family_members_salaries;
+CREATE VIEW
+persons_family_members_salaries AS
+SELECT
+pfm.person_id AS person_id,
+pfm.person_first_name AS person_first_name,
+pfm.person_last_name AS person_last_name,
+pfm.family_member_id AS family_member_id,
+pfm.family_member_first_name AS family_member_first_name,
+pfm.family_member_last_name AS family_member_last_name,
+e.salary AS family_member_salary
+
+FROM
+persons_family_members pfm
+
+CROSS JOIN
+employment e
+ON e.worker_id = pfm.family_member_id;
+SELECT * FROM persons_family_members_salaries;
+
+------------------------------------------- GOOD
+------------------------------------------- GOOD
+
+DROP VIEW persons_family_members_salaries_count;
+CREATE VIEW
+persons_family_members_salaries_count AS
+SELECT
+pfms.person_id,
+pfms.family_member_id,
+COUNT(pfms.family_member_salary) AS family_member_salary_count
+FROM persons_family_members_salaries pfms
+GROUP BY
+pfms.person_id, pfms.family_member_id
+ORDER BY family_member_salary_count;
+SELECT * FROM persons_family_members_salaries_count;
+
+------------------------------------------- GOOD
+------------------------------------------- GOOD
+
+DROP VIEW persons_family_income;
+CREATE VIEW
+persons_family_income AS
+SELECT
+pfms.person_id,
+pfms.person_first_name,
+pfms.person_last_name,
+SUM(pfms.family_member_salary) AS family_income
+FROM persons_family_members_salaries pfms
+GROUP BY
+pfms.person_id,
+pfms.person_first_name,
+pfms.person_last_name
+-- ORDER BY person_id;
+ORDER BY family_income DESC;
+SELECT * FROM persons_family_income;
+
+------------------------------------------- GOOD
+------------------------------------------- GOOD
+
+DROP VIEW TASK_C;
+CREATE VIEW TASK_C AS
+SELECT * FROM persons_family_income
+LIMIT 1;
+SELECT * FROM TASK_C;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 -- SELECT
+-- p.person_id AS family_id,
 -- p.person_id,
 -- p.first_name,
 -- p.last_name,
@@ -326,69 +542,28 @@ SELECT * FROM TASK_B;
 -- employment e
 -- ON
 -- e.worker_id = p.person_id
+-- OR
+-- e.worker_id = w.person_id
+-- -- OR
+-- -- e.worker_id = h.person_id
+-- -- OR
+-- -- e.worker_id = ch.person_id
 
--- CROSS JOIN
+-- WHERE e.worker_id = p.person_id
+
+-- UNION
+
+-- SELECT
+-- family_id,
 -- w.person_id,
 -- w.first_name,
--- w.last_name
--- FROM people w
--- WHERE EXISTS
--- (SELECT person_id
--- FROM people
+-- w.last_name,
+-- COALESCE(e.salary, 0)
+-- FROM
+-- people w
 -- WHERE
--- husband_id = p.person_id)
--- ON p.wife_id = w.person_id
-
--- CROSS JOIN
--- h.person_id,
--- h.first_name,
--- h.last_name
--- FROM people h
--- WHERE EXISTS
--- (SELECT person_id
--- FROM people
--- WHERE
--- wife_id = p.person_id)
-
-
-
-
-
-SELECT
-p.person_id AS family_id,
-p.person_id,
-p.first_name,
-p.last_name,
-COALESCE(e.salary, 0)
-FROM
-people p
-
-LEFT JOIN
-employment e
-ON
-e.worker_id = p.person_id
-OR
-e.worker_id = w.person_id
--- OR
--- e.worker_id = h.person_id
--- OR
--- e.worker_id = ch.person_id
-
-WHERE e.worker_id = p.person_id
-
-UNION
-
-SELECT
-family_id,
-w.person_id,
-w.first_name,
-w.last_name,
-COALESCE(e.salary, 0)
-FROM
-people w
-WHERE
-p.person_id = w.husband_id
-AND
+-- p.person_id = w.husband_id
+-- AND
 e.worker_id = w.person_id
 
 
